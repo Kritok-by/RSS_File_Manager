@@ -1,0 +1,21 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "file managger for RSS school",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "fm-to-rss"
+  },
+  "keywords": [
+    "nodeJS",
+    "cli",
+    "file-manager"
+  ],
+  "author": "Kritok-by",
+  "license": "ISC"
+}
