@@ -63,6 +63,7 @@ export const cp = async (currPath, newPath) => new Promise((resolve, reject) => 
     })
 
     copy.on('error', (e) => reject(e));
+    readStream.on('error', (e) => reject(e));
 })
 
 export const mv = async (currPath, newPath) => {

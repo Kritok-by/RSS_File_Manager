@@ -15,9 +15,7 @@ export const compress = async (fileName, zipName) => {
     return await new Promise((resolve, reject) => {
         const readStream = createReadStream(getPath(fileName));
         const writeStream = createWriteStream(zipName);
-
         const brotli = createBrotliCompress();
-
         const stream = readStream.pipe(brotli).pipe(writeStream);
 
         stream.on('finish', () => {
@@ -25,6 +23,7 @@ export const compress = async (fileName, zipName) => {
             resolve();
         });
         stream.on('error', (e) => reject(e))
+        readStream.on('error', (e) => reject(e))
     })
 }
 
@@ -49,5 +48,6 @@ export const decompress = async (zipName, fileName) => {
         });
 
         stream.on('error', (e) => reject(e))
+        readStream.on('error', (e) => reject(e))
     });
 }
