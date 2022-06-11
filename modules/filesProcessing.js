@@ -80,7 +80,7 @@ export const mv = async (currPath, newPath) => {
 }
 
 export const rm = async (path) => {
-    const filename = basename(currPath);
+    const filename = basename(path);
 
     await unlink(getPath(path));
 
