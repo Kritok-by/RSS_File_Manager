@@ -58,10 +58,10 @@ const commandProcess = new Transform({
                     await decompress(...args);
                     break;
                 default:
-                    throw new Error(`Unsupported command: ${command}`);
+                    throw new Error(EOL+`Invalid input: unsupported command ${command}`);
             }
         } catch (e) {
-            console.log(EOL + e.message);
+            console.log(EOL + 'Operation failed: '+ e.message);
         }
 
         console.log(`${EOL}You are currently in ${cwd()} :`)

@@ -5,11 +5,11 @@ import {getPath} from './moveCommands.js';
 
 export const compress = async (fileName, zipName) => {
     if (!fileName) {
-        throw new Error('Enter path to file');
+        throw new Error('Invalid input: enter path to file');
     }
 
     if (!zipName) {
-        throw new Error('Enter path to archive');
+        throw new Error('Invalid input: enter path to archive');
     }
 
     return await new Promise((resolve, reject) => {
@@ -30,11 +30,11 @@ export const compress = async (fileName, zipName) => {
 
 export const decompress = async (zipName, fileName) => {
     if (!zipName) {
-        throw new Error('Enter path to archive');
+        throw new Error('Invalid input: enter path to archive');
     }
 
     if (!fileName) {
-        throw new Error('Enter path to file');
+        throw new Error('Invalid input: enter path to file');
     }
 
     return await new Promise((resolve, reject) => {

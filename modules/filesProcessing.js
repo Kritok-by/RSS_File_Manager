@@ -30,8 +30,8 @@ export const add = (path) => new Promise((resolve, reject) => {
 })
 
 export const rn = async (path, newName) => {
-    if (!path) throw new Error('Enter path to file');
-    if (!newName) throw new Error('Enter new file name');
+    if (!path) throw new Error('Invalid input: enter path to file');
+    if (!newName) throw new Error('Invalid input: enter new file name');
 
 
     const fileName = basename(path);
@@ -45,8 +45,8 @@ export const rn = async (path, newName) => {
 }
 
 export const cp = async (currPath, newPath) => new Promise((resolve, reject) => {
-    if (!currPath) throw new Error('Enter path to file');
-    if (!newPath) throw new Error('Enter path to new file');
+    if (!currPath) throw new Error('Invalid input: enter path to file');
+    if (!newPath) throw new Error('Invalid input: enter path to new file');
 
 
     const filename = basename(currPath);
@@ -66,8 +66,8 @@ export const cp = async (currPath, newPath) => new Promise((resolve, reject) => 
 })
 
 export const mv = async (currPath, newPath) => {
-    if (!currPath) throw new Error('Enter path to file');
-    if (!newPath) throw new Error('Enter path to new file');
+    if (!currPath) throw new Error('Invalid input: enter path to file');
+    if (!newPath) throw new Error('Invalid input: enter path to new file');
 
     const filename = basename(currPath);
 
