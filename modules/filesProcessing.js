@@ -1,108 +1,88 @@
 import { createReadStream, createWriteStream } from 'fs';
 import { rename, copyFile, unlink } from 'fs/promises';
+import { EOL } from 'os';
 import { basename } from 'path';
 import { join } from 'path';
-import { getPath } from '../commands.js';
+import { getPath } from './moveCommands.js';
 
-export const cat = (path) => {
-  try {
-    return new Promise((resolve, reject) => {
-      const readStream = createReadStream(getPath(path));
-      readStream.on('data',(chunk)=> {
-        console.log(chunk.toString());
-        resolve();
-      })
-      readStream.on('error', (e) => reject(e));
-    })
-  } catch (e) {
-    console.log(e.message);
-  }
-}
+export const cat = (path) => new Promise((resolve, reject) => {
+  const readStream = createReadStream(getPath(path));
 
-export const add = (path) => {
-  try {
-    const fileName = basename(path);
+  readStream.on('data',(chunk)=> {
+    console.log(EOL+chunk.toString());
+    resolve();
+  })
 
-    createWriteStream(getPath(path));
+  readStream.on('error', (e) => reject(e));
+})
 
-    console.log(`File ${fileName} created!`);
-  } catch (e) {
-    console.log(e.message);
-  }
-}
+export const add = (path) => new Promise((resolve, reject) => {
+  const fileName = basename(path);
+  const writeStream = createWriteStream(getPath(path));
+
+  writeStream.on('error', (e) => reject(e));
+
+  writeStream.on('finish', () => {
+    console.log(EOL + `File ${fileName} created!`);
+    resolve();
+  });
+
+  writeStream.close();
+})
 
 export const rn = async (path, newName) => {
-  try {
-    if (!path) {
-      throw new Error('Enter path to file');
-    }
+  if (!path) throw new Error('Enter path to file');
+  if (!newName) throw new Error('Enter new file name');
 
-    if (!newName) {
-      throw new Error('Enter new file name');
-    }
-    const fileName = basename(path);
-    let newPath = path.replace(fileName, newName);
-    newPath = getPath(newPath);
 
-    await rename(getPath(path), newPath);
-    console.log(`File ${fileName} renamed to ${newName}`);
+  const fileName = basename(path);
 
-  } catch (e) {
-    console.log(e.message);
-  }
+  let newPath = path.replace(fileName, newName);
+  newPath = getPath(newPath);
+
+  await rename(getPath(path), newPath);
+
+  console.log(EOL+`File ${fileName} renamed to ${newName}`);
 }
 
-export const cp = async (currPath, newPath) => {
-  try {
-    if (!currPath) {
-      throw new Error('Enter path to file');
-    }
-    if (!newPath) {
-      throw new Error('Enter path to new file');
-    }
-    const filename = basename(currPath);
+export const cp = async (currPath, newPath) => new Promise((resolve, reject) => {
+  if (!currPath) throw new Error('Enter path to file');
+  if (!newPath) throw new Error('Enter path to new file');
 
-    const newFile = join(newPath, filename);
 
-    await copyFile(getPath(currPath), getPath(newFile));
+  const filename = basename(currPath);
+  const newFile = join(newPath, filename);
 
-    console.log(`File ${filename} copied!`);
-  } catch (e) {
-    console.log(e.message);
-  }
-}
+  const readStream = createReadStream(getPath(currPath));
+  const writeStream = createWriteStream(getPath(newFile));
+
+  const copy = readStream.pipe(writeStream);
+
+  copy.on('finish', () => {
+    console.log(EOL + `File ${filename} copied!`);
+    resolve();
+  })
+
+  copy.on('error', (e) => reject(e));
+})
 
 export const mv = async (currPath, newPath) => {
-  try {
-    if (!currPath) {
-      throw new Error('Enter path to file');
-    }
-    if (!newPath) {
-      throw new Error('Enter path to new file');
-    }
-    const filename = basename(currPath);
+  if (!currPath) throw new Error('Enter path to file');
+  if (!newPath) throw new Error('Enter path to new file');
 
-    const newFile = join(newPath, filename);
+  const filename = basename(currPath);
 
-    await copyFile(getPath(currPath), getPath(newFile));
-    await unlink(getPath(currPath));
+  await cp(currPath, newPath);
 
-    console.log(`File ${filename} moved to ${getPath(newPath)}`);
-  } catch (e) {
-    console.log(e.message);
-  }
+  await unlink(getPath(currPath));
+
+  console.log(EOL+`File ${filename} moved to ${getPath(newPath)}`);
 }
 
-export const rm = (path) => {
-  try {
-    if (!path) {
-      throw new Error('Enter path to file');
-    }
+export const rm = async (path) => {
+  const filename = basename(currPath);
 
-    await unlink(getPath(currPath));
+  await unlink(getPath(path));
 
-    console.log(`File ${filename} removed!`);
-  } catch (e) {
-    console.log(e.message);
-  }
+  console.log(EOL+`File ${filename} removed!`);
 }

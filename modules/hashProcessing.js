@@ -1,21 +1,19 @@
 import { createHash } from 'crypto';
 import { createReadStream } from 'fs';
-import { getPath } from '../commands.js';
+import { EOL } from 'os';
+import { getPath } from './moveCommands.js';
 
 export const calculateHash = async (path) => {
-  try {
-    const readStream = createReadStream(getPath(path));
+  const readStream = createReadStream(getPath(path));
 
-    return await new Promise((resolve, reject) => {
-      readStream.on('data', (file) => {
+  return await new Promise((resolve, reject) => {
+    readStream.on('data', (file) => {
       const hash = createHash('sha256').update(file).digest('hex');
-        console.log('Hash: ' + hash);
-        resolve(hash);
 
-      })
-      readStream.on('error', (e) => reject(e))
+      console.log(EOL+'Hash: ' + hash);
+      resolve(hash);
     })
-  } catch (e) {
-    console.log(e.message);
-  }
+
+    readStream.on('error', (e) => reject(e))
+  })
 };

@@ -1,16 +1,17 @@
 import { Transform } from "stream";
-import { env, chdir, cwd } from 'process';
+import { cwd } from 'process';
 import { EOL } from 'os';
 import { compress, decompress } from './modules/archiveProcessing.js';
-import { up, cd } from './commands.js';
+import { up, cd } from './modules/moveCommands.js';
 import { list } from './modules/listFiles.js';
 import osInfo from './modules/osInfo.js';
 import { calculateHash } from './modules/hashProcessing.js';
-import { cat, add, rn, cp, mv } from './modules/filesProcessing.js';
+import { cat, add, rn, cp, mv, rm } from './modules/filesProcessing.js';
 
 const commandProcess = new Transform({
   async transform(chunk, encoding, callback) {
     const [command, ...args] = chunk.toString().replace(EOL, '').split(' ');
+
     try {
       switch (command) {
         case '.exit':
@@ -19,7 +20,7 @@ const commandProcess = new Transform({
           up();
           break;
         case 'cd':
-          env.dirname = await cd(...args);
+          await cd(...args);
           break;
         case 'ls':
           await list();
@@ -33,7 +34,7 @@ const commandProcess = new Transform({
           await cat(...args);
           break;
         case 'add':
-          add(...args);
+          await add(...args);
           break;
         case 'rn':
           await rn(...args);
@@ -45,6 +46,7 @@ const commandProcess = new Transform({
           await mv(...args);
           break;
         case 'rm':
+          await rm(...args);
           break;
         case 'hash':
           await calculateHash(...args);
@@ -56,11 +58,12 @@ const commandProcess = new Transform({
           await decompress(...args);
           break;
         default:
-          throw `Unsupported command: ${command}`;
+          throw new Error(`Unsupported command: ${command}`);
       }
     } catch (e) {
-      console.log(e);
+      console.log(EOL+e.message);
     }
+
     console.log(`${EOL}You are currently in ${cwd()} :`)
     callback();
   },

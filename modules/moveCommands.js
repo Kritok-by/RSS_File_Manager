@@ -4,7 +4,7 @@ import { isAbsolute, join } from 'path';
 
 export const up = () => {
   if (cwd().length<=1) {
-    throw 'You are in root derectory!';
+    throw new Error('You are in root derectory!');
   }
 
   chdir('../')
@@ -12,7 +12,7 @@ export const up = () => {
 
 export const cd = async (path) => {
   if (!path) {
-    return Promise.reject('Please write path uri!');
+    throw new Error('Please write path uri!');
   }
   const prevPath = cwd();
 
@@ -21,7 +21,7 @@ export const cd = async (path) => {
     await lstat(cwd());
   } catch (e) {
     chdir(prevPath);
-    return Promise.reject(`cd: no such directory: ${path}`);
+    throw new Error(`cd: no such directory: ${path}`);
   }
 }
 
