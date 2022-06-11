@@ -12,7 +12,7 @@ export const up = () => {
 
 export const cd = async (path) => {
     if (!path) {
-        throw new Error('Please write path uri!');
+        throw new Error('Invalid input: please write path uri!');
     }
     const prevPath = cwd();
 
